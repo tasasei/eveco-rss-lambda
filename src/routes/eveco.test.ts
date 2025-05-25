@@ -1,4 +1,4 @@
-import { downloadArticles } from './api'
+import { downloadArticles } from './eveco'
 import { Feed } from 'feed'
 
 test('downloadArticles', async () => {

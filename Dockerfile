@@ -1,26 +1,32 @@
 ## build
-FROM node:18.16.0-alpine3.17 as builder
+FROM node:22.16.0 AS builder
 WORKDIR /work
 
 # install packages
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # compole TypeScript to JS
 COPY src tsconfig.json ./
 RUN npm run build
 
 ## run
-FROM public.ecr.aws/lambda/nodejs:20 as runner
-WORKDIR ${LAMBDA_TASK_ROOT}
+FROM node:22.16.0 AS runner
+WORKDIR /work
+
+# for lambda
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter 
+
+# Listen port
+ENV PORT 8080
+EXPOSE 8080
 
 # install paclages
 COPY package*.json ./
-RUN npm install --omit=dev && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 # copy build result from builder
-COPY --from=builder /work/dist/* ./
-# COPY --from=builder /work/dist ./dist
+COPY --from=builder /work/dist ./dist
 
 # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
-CMD [ "index.handler" ]
+CMD ["node", "./dist/index.js"]
