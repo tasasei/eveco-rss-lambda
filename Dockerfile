@@ -1,5 +1,5 @@
 ## build
-FROM node:22.16.0 AS builder
+FROM node:22.16.0-slim AS builder
 WORKDIR /work
 
 # install packages
@@ -11,7 +11,7 @@ COPY src tsconfig.json ./
 RUN npm run build
 
 ## run
-FROM node:22.16.0 AS runner
+FROM node:22.16.0-slim AS runner
 WORKDIR /work
 
 # for lambda
