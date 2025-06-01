@@ -5,6 +5,10 @@ const baseUrl = 'https://www.start.gg'
 
 const route = Router()
 route.get('/rss', async (req, res) => {
+  // get query parameters
+  const values = req.query.addrState
+  const queryAddrState = Array.isArray(values) ? values : values ? [values] : [];
+
   const feed = new Feed({
     id: 'rss-startgg',
     title: 'SSBU Event Info Startgg',
@@ -12,6 +16,7 @@ route.get('/rss', async (req, res) => {
   })
   const articleRes = await downloadArticles()
   articleRes
+    .filter(a => queryAddrState.length < 1 || queryAddrState.includes(a.addrState))
     .forEach(a => {
       const { url, countryCode, name, startAt, addrState } = a
       feed.addItem({
