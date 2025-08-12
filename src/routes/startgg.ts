@@ -19,11 +19,17 @@ route.get('/rss', async (req, res) => {
     .filter(a => queryAddrState.length < 1 || queryAddrState.includes(a.addrState))
     .forEach(a => {
       const { url, countryCode, name, startAt, addrState } = a
+      const startDate = new Date(startAt * 1000)
+      const startDateStr = startDate.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
       feed.addItem({
         title: name,
         link: baseUrl + url,
         date: new Date(startAt * 1000),
-        description: countryCode + ' ' + addrState
+        description: countryCode + ' ' + addrState + '\n' + startDateStr
       })
     })
 
