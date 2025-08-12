@@ -40,7 +40,7 @@ const query = `
     tournaments(query: {
       perPage: $perPage
       page: 1
-      sortBy: "startAt asc"
+      sortBy: "startAt desc"
       filter: {
         upcoming: true
         videogameIds: $videogameIds
