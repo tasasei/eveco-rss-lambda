@@ -61,6 +61,7 @@ route.get('/cal', async (req, res) => {
     .send(calendar.toString())
 })
 
+const token = process.env.STARTGG_API_TOKEN
 const endpoint = 'https://api.start.gg/gql/alpha'
 
 // shema: https://smashgg-schema.netlify.app/reference/tournamentpagefilter.doc
