@@ -14,6 +14,8 @@ route.get('/rss', async (req, res) => {
     id: 'rss-startgg',
     title: 'SSBU Event Info Startgg',
     copyright: 'SSBU',
+    link: baseUrl,
+    description: 'Startgg events'
   })
   const articleRes = await downloadArticles()
   articleRes

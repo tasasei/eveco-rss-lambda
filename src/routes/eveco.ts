@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { parse } from 'node-html-parser'
 import { Feed } from 'feed';
 
+const baseUrl = 'https://www.eveco.app/category/_DUYf5x4ndq'
 const route = Router()
 route.get('/rss', async (req, res) => {
   const values = req.query.region
@@ -11,6 +12,8 @@ route.get('/rss', async (req, res) => {
     id: 'rss-eveco-ssbu',
     title: 'SSBU Event Info Eveco',
     copyright: 'SSBU',
+    link: baseUrl,
+    description: 'Eveco events'
   })
 
   const articleRes = await downloadArticles()
@@ -30,7 +33,7 @@ route.get('/rss', async (req, res) => {
 })
 
 export async function downloadArticles() {
-  const res = await fetch('https://www.eveco.app/category/_DUYf5x4ndq')
+  const res = await fetch(baseUrl)
   const d = await res.text()
   const root = parse(d);
   const elements = root.querySelectorAll('main div div div a')
