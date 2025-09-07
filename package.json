@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^5.1.0",
     "feed": "^4.2.2",
+    "ical-generator": "^9.0.0",
     "node-html-parser": "^6.1.13"
   },
   "devDependencies": {

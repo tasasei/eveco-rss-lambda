@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Feed } from 'feed';
+import ical from 'ical-generator';
 
 const baseUrl = 'https://www.start.gg'
 
@@ -37,7 +38,29 @@ route.get('/rss', async (req, res) => {
   res.send(response)
 })
 
-const token = process.env.STARTGG_API_TOKEN
+route.get('/cal', async (req, res) => {
+  const articleRes = await downloadArticles()
+  const calendar = ical({ name: 'Startgg SSBU' });
+  const startTime = new Date();
+  const endTime = new Date();
+  endTime.setHours(startTime.getHours() + 1);
+  articleRes
+    .forEach(a => {
+      const { url, countryCode, name, startAt, endAt, addrState } = a
+      calendar.createEvent({
+        start: new Date(startAt * 1000),
+        end: new Date(endAt * 1000),
+        summary: [addrState, name].filter(a => a).join(' '),
+        description: addrState,
+        location: addrState,
+        url: baseUrl + url,
+      })}
+    )
+  res
+    .contentType('text/calendar; charset=utf-8')
+    .send(calendar.toString())
+})
+
 const endpoint = 'https://api.start.gg/gql/alpha'
 
 // shema: https://smashgg-schema.netlify.app/reference/tournamentpagefilter.doc
@@ -58,6 +81,7 @@ const query = `
         name
         slug
         startAt
+        endAt
         addrState
         countryCode
         url
@@ -77,6 +101,7 @@ export async function downloadArticles(): Promise<{
   name: string
   slug: number
   startAt: number
+  endAt: number
   addrState: string
   countryCode: string
   url: string
