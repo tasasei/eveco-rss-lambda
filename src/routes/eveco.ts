@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { parse } from 'node-html-parser'
 import { Feed } from 'feed';
+import ical from 'ical-generator';
 
 const baseUrl = 'https://www.eveco.app/category/_DUYf5x4ndq'
 const route = Router()
@@ -24,12 +25,32 @@ route.get('/rss', async (req, res) => {
       feed.addItem({
         title: title,
         link,
-        date,
+        date: new Date(date),
         description: region
       })
     })
   const response = feed.rss2()
   res.send(response)
+})
+
+route.get('/cal', async (req, res) => {
+  const articleRes = await downloadArticles()
+  const calendar = ical({ name: 'Eveco SSBU' })
+  articleRes
+    .forEach(a => {
+      const { link, region, title, date } = a
+      calendar.createEvent({
+        start: new Date(date),
+        // end: new Date(endAt * 1000),
+        summary: [region, title].filter(a => a).join(' '),
+        // description: addrState,
+        location: region,
+        url: link,
+      })}
+    )
+  res
+    .contentType('text/calendar; charset=utf-8')
+    .send(calendar.toString())
 })
 
 export async function downloadArticles() {
@@ -58,10 +79,11 @@ export async function downloadArticles() {
     const currentMonth = now.getMonth()
     const year = month < currentMonth ? now.getFullYear() + 1 : now.getFullYear()
 
-    const hour = e.querySelector('div.text-default-500')?.innerText.match(/^[0-9]+/)
+    const hour_str = e.querySelector('div.text-default-500')?.innerText.match(/^[0-9]+/)
+    const hour = Number(hour_str || 0)
     const timeoffset = 9
 
-    const eventDate = new Date(Date.UTC(year, month, date, timeoffset, 0))
+    const eventDate = Date.UTC(year, month, date, hour - timeoffset, 0)
     const region = e.querySelector('div.text-gray-100 > div:last-child')?.innerText || ''
     return {
       title,
