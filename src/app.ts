@@ -3,6 +3,9 @@ import { router } from "./routes";
 
 const app = express()
 
-app.use('/', router)
+app.get('/', (req, res) => {
+  res.sendStatus(200)
+})
+app.use('/api/v1', router)
 
 export { app }
