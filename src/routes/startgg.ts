@@ -50,7 +50,7 @@ route.get('/cal', async (req, res) => {
         start: new Date(startAt * 1000),
         end: new Date(endAt * 1000),
         summary: [addrState, name].filter(a => a).join(' '),
-        description: addrState,
+        description: url,
         location: addrState,
         url: baseUrl + url,
       })}
