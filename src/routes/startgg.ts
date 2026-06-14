@@ -45,13 +45,13 @@ route.get('/cal', async (req, res) => {
   const calendar = ical({ name: 'Startgg SSBU' })
   articleRes
     .forEach(a => {
-      const { url, countryCode, name, startAt, endAt, addrState } = a
+      const { url, name, startAt, endAt, addrState, venueAddress } = a
       calendar.createEvent({
         start: new Date(startAt * 1000),
         end: new Date(endAt * 1000),
         summary: [addrState, name].filter(a => a).join(' '),
         description: baseUrl + url,
-        location: addrState,
+        location: venueAddress,
         url: baseUrl + url,
       })}
     )
@@ -85,6 +85,7 @@ const query = `
         addrState
         countryCode
         url
+        venueAddress
       }
     }
   }
@@ -105,6 +106,8 @@ export async function downloadArticles(): Promise<{
   addrState: string
   countryCode: string
   url: string
+  /** 住所 */
+  venueAddress: string
 }[]> {
   const res = await fetch(endpoint, {
     method: 'POST',

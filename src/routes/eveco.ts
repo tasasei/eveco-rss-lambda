@@ -38,13 +38,13 @@ route.get('/cal', async (req, res) => {
   const calendar = ical({ name: 'Eveco SSBU' })
   articleRes
     .forEach(a => {
-      const { link, region, title, date } = a
+      const { link, region, title, date, venueAddress } = a
       calendar.createEvent({
         start: new Date(date),
         // end: new Date(endAt * 1000),
         summary: [region, title].filter(a => a).join(' '),
         description: link,
-        location: region,
+        location: venueAddress,
         url: link,
       })}
     )
@@ -85,10 +85,13 @@ export async function downloadArticles() {
 
     const eventDate = Date.UTC(year, month, date, hour - timeoffset, 0)
     const region = e.querySelector('div.text-gray-100 > div:last-child')?.innerText || ''
+    /** 住所 */
+    const venueAddress = e.querySelector('li:nth-child(2) .line-clamp-1:not(:has(.line-clamp-1))')?.innerText || ''
     return {
       title,
       link,
       region,
+      venueAddress,
       date: eventDate,
     }
   })
