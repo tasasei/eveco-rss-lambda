@@ -42,7 +42,7 @@ route.get('/rss', async (req, res) => {
 
 route.get('/cal', async (req, res) => {
   const articleRes = await downloadArticles()
-  const calendar = ical({ name: 'Startgg SSBU' })
+  const calendar = ical({ name: 'スマブラ大会(start.gg)' })
   articleRes
     .forEach(a => {
       const { url, name, startAt, endAt, addrState, venueAddress } = a
